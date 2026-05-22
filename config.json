@@ -1,0 +1,30 @@
+{
+  "download": {
+    "channel_url": "https://www.youtube.com/@allin/videos",
+    "default_days": 30,
+    "max_height": 2160,
+    "min_duration": 1800,
+    "max_results": 50,
+    "rate_limit": "5M",
+    "sub_langs": "en,zh-Hans",
+    "output_dir": "Movies/AllInPodcast",
+    "sleep_requests": 3,
+    "sleep_interval": 15,
+    "use_cookies": "chrome"
+  },
+  "style": {
+    "fontsize": 15,
+    "outline": 2,
+    "primary_color": "&H00FFFFFF",
+    "outline_color": "&H00000000",
+    "alignment": 2
+  },
+  "position": {
+    "en_marginv": 15,
+    "zh_marginv": 35
+  },
+  "output": {
+    "crf": 20,
+    "preset": "medium"
+  }
+}
