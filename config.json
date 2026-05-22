@@ -13,15 +13,15 @@
     "use_cookies": "chrome"
   },
   "style": {
-    "fontsize": 15,
+    "fontsize": 40,
     "outline": 2,
     "primary_color": "&H00FFFFFF",
     "outline_color": "&H00000000",
     "alignment": 2
   },
   "position": {
-    "en_marginv": 15,
-    "zh_marginv": 35
+    "en_marginv": 20,
+    "zh_marginv": 120
   },
   "output": {
     "crf": 20,
