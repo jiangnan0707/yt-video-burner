@@ -39,7 +39,11 @@ XI_PATTERN = re.compile(r'\bX[iI]\b')
 
 def wrap_line(text: str, max_per_line: int = 20) -> str:
     """Split text into at most 2 lines. Break near the middle at punctuation if possible."""
-    flat = text.replace("\n", "").strip()
+    # Ensure spaces between CJK and Latin characters
+    flat = re.sub(r'([一-鿿])([a-zA-Z\d])', r' ', text.replace("\n", ""))
+    flat = re.sub(r'([a-zA-Z\d])([一-鿿])', r' ', flat)
+    flat = flat.strip()
+
     if len(flat) <= max_per_line:
         return flat
 
@@ -56,8 +60,10 @@ def wrap_line(text: str, max_per_line: int = 20) -> str:
 
     if best is None:
         best = mid
-
-    return f"{flat[:best].strip()}\n{flat[best:].lstrip()}"
+        return f"{flat[:best].strip()}\n{flat[best:].lstrip()}"
+    else:
+        # Punctuation goes to the end of first line, not the start of second
+        return f"{flat[:best+1].strip()}\n{flat[best+1:].lstrip()}"
 
 
 def _parse_time_ms(time_str: str) -> int:
