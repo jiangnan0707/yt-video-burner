@@ -102,7 +102,8 @@ def process_srt(filepath: Path) -> None:
         text_lines = [l for l in lines[2:] if l.strip()]
         merged_text = " ".join(text_lines)
 
-        # Remove HTML/XML tags
+        # Remove YouTube auto-subtitle control chars (\x01, \x02, etc.) and HTML/XML tags
+        merged_text = re.sub(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]+', ' ', merged_text)
         merged_text = re.sub(r'<[^>]+>', '', merged_text).strip()
 
         # Sensitive word replacement
