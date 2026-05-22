@@ -38,38 +38,26 @@ XI_PATTERN = re.compile(r'\bX[iI]\b')
 
 
 def wrap_line(text: str, max_per_line: int = 20) -> str:
-    """Wrap text so no line exceeds max_per_line chars. Splits at word/character boundaries."""
-    flat = text.replace("\n", " ").strip()
+    """Split text into at most 2 lines. Break near the middle at punctuation if possible."""
+    flat = text.replace("\n", "").strip()
     if len(flat) <= max_per_line:
         return flat
 
-    lines = []
-    while len(flat) > max_per_line:
-        break_at = max_per_line
+    mid = len(flat) // 2
+    punct = set("，。；：！？、,.:;!? ")
+    best = None
+    for delta in range(0, 6):
+        for pos in [mid + delta, mid - delta]:
+            if 0 < pos < len(flat) and flat[pos] in punct:
+                best = pos
+                break
+        if best is not None:
+            break
 
-        # For text with spaces, try to break at a space (backward)
-        if " " in flat[:break_at]:
-            while break_at > 0 and flat[break_at] != " ":
-                break_at -= 1
+    if best is None:
+        best = mid
 
-        # For Chinese or no space found, try CJK punctuation
-        if break_at <= 0 or break_at < max_per_line * 2 // 3:
-            break_at = max_per_line
-            while break_at > 0 and flat[break_at] not in "，。；：！？、":
-                break_at -= 1
-            if break_at > 0:
-                break_at += 1
-
-        if break_at <= 0:
-            break_at = max_per_line
-
-        lines.append(flat[:break_at].strip())
-        flat = flat[break_at:].lstrip()
-
-    if flat:
-        lines.append(flat.strip())
-
-    return "\n".join(lines)
+    return f"{flat[:best].strip()}\n{flat[best:].lstrip()}"
 
 
 def _parse_time_ms(time_str: str) -> int:
@@ -152,7 +140,7 @@ def process_srt(filepath: Path) -> None:
             combined_text = (curr["text"] + " " + nxt["text"]).strip()
 
         is_zh = _is_chinese(combined_text)
-        limit = 48 if is_zh else 120
+        limit = 100 if is_zh else 170
 
         if gap < 2000 and len(combined_text) <= limit:
             curr["text"] = combined_text
@@ -167,7 +155,7 @@ def process_srt(filepath: Path) -> None:
     final_entries = []
     for i, e in enumerate(merged_entries):
         is_zh = _is_chinese(e["text"])
-        max_per = 24 if is_zh else 40
+        max_per = 48 if is_zh else 80
         wrapped = wrap_line(e["text"], max_per_line=max_per)
         final_entries.append(
             f"{i+1}\n{_format_time_ms(e['start'])} --> {_format_time_ms(e['end'])}\n{wrapped}"
