@@ -311,6 +311,7 @@ def generate_ass(srt_path: Path, ass_path: Path, cfg: dict, marginv: int, fontsi
     for i, line in enumerate(lines):
         if line.startswith("Style: Default,"):
             parts = line.split(",")
+            parts[1]  = "PingFang SC"
             parts[2]  = str(fontsize or style["fontsize"])
             parts[3]  = style["primary_color"]
             parts[4]  = style["primary_color"]
